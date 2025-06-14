@@ -8,10 +8,8 @@
 import UIKit
 
 class ReminderListViewController: UICollectionViewController {
-    typealias DataSource = UICollectionViewDiffableDataSource<Int, String>
-    typealias SnapShot = NSDiffableDataSourceSnapshot<Int, String>
-    
     var dataSource: DataSource?
+    var reminders: [Reminder] = Reminder.sampleData
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -20,45 +18,46 @@ class ReminderListViewController: UICollectionViewController {
         let listLayout = listLayout()
         collectionView.collectionViewLayout = listLayout
         
-        let cellRegistration = UICollectionView.CellRegistration{
-            (cell: UICollectionViewListCell, indexPath: IndexPath, itemIdentifier: String) in
-            let reminder = Reminder.sampleData[indexPath.item]
-            var contentConfiguration = cell.defaultContentConfiguration()
-            contentConfiguration.text = reminder.title
-            cell.contentConfiguration = contentConfiguration
+        let cellRegistration = UICollectionView.CellRegistration(
+            handler: cellRegistrationHandler
+        )
+        
+        
+        dataSource = DataSource(
+            collectionView: collectionView
+        ) {
+            (
+                collectionView: UICollectionView,
+                indexPath: IndexPath,
+                itemIdentifier: Reminder.ID
+            ) in
+            return collectionView
+                .dequeueConfiguredReusableCell(
+                    using: cellRegistration,
+                    for: indexPath,
+                    item: itemIdentifier
+                )
         }
         
-        dataSource = DataSource(collectionView: collectionView, cellProvider: { (collectionView, indexPath, itemIdentifier) in
-            return collectionView.dequeueConfiguredReusableCell(using: cellRegistration, for: indexPath, item: itemIdentifier)
-        })
+        updateSnapshot()
         
-        var snapshot = SnapShot()
-        snapshot.appendSections([0])
-        
-        var reminderTitles = [String]()
-        
-        for reminder in Reminder.sampleData{
-            reminderTitles.append(reminder.title)
-        }
-        
-        snapshot.appendItems(reminderTitles)
-        dataSource?.apply(snapshot)
-
         collectionView.dataSource = dataSource
     }
     
     
     private func listLayout() -> UICollectionViewCompositionalLayout{
-        var listConfiguration = UICollectionLayoutListConfiguration(appearance: .grouped)
+        var listConfiguration = UICollectionLayoutListConfiguration(
+            appearance: .grouped
+        )
         listConfiguration.showsSeparators = false
         listConfiguration.backgroundColor = .clear
-        return UICollectionViewCompositionalLayout.list(using: listConfiguration)
+        return UICollectionViewCompositionalLayout
+            .list(
+                using: listConfiguration
+            )
     }
     
-    func makeDataSource() -> DataSource {
-        let reminderCellReistration = self.reminderCellRegistration()
-    }
-
+  
 
 }
 

@@ -54,6 +54,10 @@ class ReminderListViewController: UICollectionViewController {
         listConfiguration.backgroundColor = .clear
         return UICollectionViewCompositionalLayout.list(using: listConfiguration)
     }
+    
+    func makeDataSource() -> DataSource {
+        let reminderCellReistration = self.reminderCellRegistration()
+    }
 
 
 }

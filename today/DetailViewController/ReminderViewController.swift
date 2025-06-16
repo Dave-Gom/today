@@ -7,8 +7,8 @@
 import UIKit
 
 class ReminderViewController: UICollectionViewController {
-    private typealias DataSource = UICollectionViewDiffableDataSource<Int, Row>
-    private typealias Snapshot = NSDiffableDataSourceSnapshot<Int, Row>
+    private typealias DataSource = UICollectionViewDiffableDataSource<Section, Row>
+    private typealias Snapshot = NSDiffableDataSourceSnapshot<Section, Row>
     
     var reminder: Reminder
     private var dataSource: DataSource!
@@ -25,7 +25,20 @@ class ReminderViewController: UICollectionViewController {
         fatalError("Always initialize ReminderViewController using init(reminder:)")
     }
     
+        
     func cellRegistrationHandler(cell: UICollectionViewListCell, indexPath: IndexPath, row: Row){
+        let section = section(for: indexPath)
+        switch (section, row) {
+        case (.view, _):
+            var contentConfiguration = cell.defaultContentConfiguration()
+            contentConfiguration.text = text(for: row)
+            contentConfiguration.textProperties.font = UIFont.preferredFont(forTextStyle: row.textStyle)
+            contentConfiguration.image = row.image
+            cell.contentConfiguration = contentConfiguration
+        default:
+            fatalError("Unexpected combination of section and row.")
+        }
+        
         var contentConfiguration = cell.defaultContentConfiguration()
         contentConfiguration.text = text(for: row)
         contentConfiguration.textProperties.font = UIFont.preferredFont(forTextStyle: row.textStyle)
@@ -44,8 +57,19 @@ class ReminderViewController: UICollectionViewController {
         
         navigationItem.style = .navigator
         navigationItem.title = NSLocalizedString("Reminder", comment: "Reminder view controller title")
+        navigationItem.rightBarButtonItem = editButtonItem
         
-        updateSnapshot()
+        updateSnapshotForViewing()
+    }
+    
+    override func setEditing(_ editing: Bool, animated: Bool) {
+        super.setEditing(editing, animated: animated)
+        if(editing) {
+            updateSnapshotFOrEditing()
+        }
+        else{
+            updateSnapshotForViewing()
+        }
     }
     
     func text(for row: Row) -> String? {
@@ -57,10 +81,25 @@ class ReminderViewController: UICollectionViewController {
         }
     }
     
-    private func updateSnapshot() {
+    private func updateSnapshotForViewing() {
         var snapshot = Snapshot()
-        snapshot.appendSections([0])
-        snapshot.appendItems([Row.title, Row.date, Row.time, Row.notes], toSection: 0)
+        snapshot.appendSections([.view])
+        snapshot.appendItems([Row.title, Row.date, Row.time, Row.notes], toSection: .view)
         dataSource?.apply(snapshot)
+    }
+    
+    private func section(for indexPath: IndexPath) -> Section {
+        let sectionNumber = isEditing ? indexPath.section + 1 : indexPath.section
+        guard let section = Section(rawValue: sectionNumber) else {
+            fatalError("Unable to find marching section xd")
+        }
+        
+        return section
+    }
+    
+    private func updateSnapshotFOrEditing() {
+        var snaptshot = Snapshot()
+        snaptshot.appendSections([.title, .date, .notes])
+        dataSource?.apply(snaptshot)
     }
 }

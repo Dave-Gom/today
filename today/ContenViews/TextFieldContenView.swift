@@ -51,7 +51,7 @@ class TextFieldContentView: UIView, UIContentView {
 }
 
 
-extension UICollectionViewCell {
+extension UICollectionViewListCell {
     func textFieldConfiguration() -> TextFieldContentView.Configuration{
         TextFieldContentView.Configuration()
     }

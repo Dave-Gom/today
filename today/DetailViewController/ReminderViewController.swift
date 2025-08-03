@@ -31,7 +31,7 @@ class ReminderViewController: UICollectionViewController {
         let section = section(for: indexPath)
         switch (section, row) {
         case (_, .header(let title)):
-            cell.contentConfiguration = headerCOnfiguration(for: cell, with: title)
+            cell.contentConfiguration = headerConfiguration(for: cell, with: title)
         case (.view, _):
             cell.contentConfiguration = defaultConfiguration(for: cell, at: row)
         case (.title, .editableText(let title)):

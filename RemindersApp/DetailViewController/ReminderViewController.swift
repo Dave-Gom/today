@@ -59,13 +59,10 @@ class ReminderViewController: UICollectionViewController {
             var contentConfiguration = cell.defaultContentConfiguration()
             contentConfiguration.text = title
             cell.contentConfiguration = contentConfiguration
-            
         case (.view, row):
-            var contentConfiguration = cell.defaultContentConfiguration()
-            contentConfiguration.text = text(for: row)
-            contentConfiguration.textProperties.font = UIFont.preferredFont(forTextStyle: row.textStyle)
-            contentConfiguration.image = row.image
-            cell.contentConfiguration = contentConfiguration
+            cell.contentConfiguration = defaultConfiguration(for: cell, at: row)
+        case (.title, .editableText(let title)):
+            cell.contentConfiguration = titleConfiguration(for: cell, with: title)
         default:
             fatalError("Unexpected combination of section and row")
         }
@@ -73,20 +70,10 @@ class ReminderViewController: UICollectionViewController {
         cell.tintColor = .todayPrimaryTint
     }
     
-    func text(for row: Row) -> String? {
-        switch row {
-        case .date: return reminder.dueDate.dayText
-        case .notes: return reminder.notes
-        case .time: return reminder.dueDate.formatted(date: .omitted, time: .shortened)
-        case .title: return reminder.title
-        default: return nil
-        }
-    }
-    
     private func updateSnapshotForEditing() {
         var snapShot = SnapShot()
         snapShot.appendSections([.title, .date, .notes])
-        snapShot.appendItems([.header(Section.title.name)], toSection: .title)
+        snapShot.appendItems([.header(Section.title.name), .editableText(reminder.title)], toSection: .title)
         snapShot.appendItems([.header(Section.date.name)], toSection: .date)
         snapShot.appendItems([.header(Section.notes.name)], toSection: .notes)
         dataSource?.apply(snapShot)

@@ -54,6 +54,11 @@ class ReminderViewController: UICollectionViewController {
         }
     }
     
+    @objc func didCancelEdit() {
+        workingReminder = reminder
+        setEditing(false, animated: true)
+    }
+    
     func cellRegistrationHandler(cell: UICollectionViewListCell, indexPath: IndexPath, row: Row){
         let section = section(for: indexPath)
         switch(section, row){
@@ -77,6 +82,7 @@ class ReminderViewController: UICollectionViewController {
     }
     
     func prepareForViewEditing() {
+        navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(didCancelEdit))
         updateSnapshotForEditing()
     }
     
@@ -90,6 +96,7 @@ class ReminderViewController: UICollectionViewController {
     }
     
     private func prepareForViewing() {
+        navigationItem.leftBarButtonItem = nil
         if(workingReminder != reminder){
             reminder = workingReminder
         }

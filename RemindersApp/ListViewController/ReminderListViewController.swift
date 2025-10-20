@@ -40,7 +40,11 @@ class ReminderListViewController: UICollectionViewController {
     // esto hace la navegacion
     func pushDetailViewForReminder(with id: Reminder.ID){
         let reminder = reminder(withId: id)
-        let viewController = ReminderViewController(reminder: reminder)
+        let viewController = ReminderViewController(reminder: reminder, onChange: {
+            [weak self] reminder in
+            self?.updateReminder(reminder)
+            self?.updateSnapshot(reloading: [reminder.id])
+        })
         navigationController?.pushViewController(viewController, animated: true)
     }
     

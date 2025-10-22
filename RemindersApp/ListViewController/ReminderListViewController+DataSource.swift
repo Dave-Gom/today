@@ -75,6 +75,11 @@ extension ReminderListViewController {
         
     }
     
+    func deleteReminder(withId id: Reminder.ID){
+        let index = reminders.indexOfreminder(withId: id)
+        reminders.remove(at: index)
+    }
+    
     private func doneButtonAccessibilityAction(for reminder: Reminder) -> UIAccessibilityCustomAction {
         let name = NSLocalizedString("Toggle completition", comment: "Reminder done button accessibility label")
         let action = UIAccessibilityCustomAction(name: name, actionHandler: {[weak self] action in

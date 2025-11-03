@@ -90,6 +90,19 @@ class ReminderListViewController: UICollectionViewController {
         
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        refresahBackground()
+    }
+    
+    func refresahBackground() {
+        collectionView.backgroundView = nil
+        let bacgroundView = UIView()
+        let gradientLayer = CAGradientLayer.gradientLayer(for: listStyle, in: collectionView.frame)
+        bacgroundView.layer.addSublayer(gradientLayer)
+        collectionView.backgroundView = bacgroundView
+    }
+    
     // esto hace la navegacion
     func pushDetailViewForReminder(with id: Reminder.ID){
         let reminder = reminder(withId: id)
